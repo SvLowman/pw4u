@@ -1,16 +1,23 @@
 const { readCommandLineArguments } = require("./lib/commandLine");
 const { connect, close } = require("./lib/database");
-const { getPassword, setPassword } = require("./lib/passwords");
+const {
+  //readPasswordSafe,
+  getPassword,
+  setPassword,
+} = require("./lib/passwords");
 const { askForMasterPassword } = require("./lib/questions");
 const { isMasterPasswordCorrect } = require("./lib/validation");
 
 async function run() {
   console.log("Connecting to database...");
   await connect(
-    "mongodb+srv://leon:9MkwXXRt3qB3vCxN@cluster0.912k3.mongodb.net/pw4u?retryWrites=true&w=majority",
-    "pw4u"
+    "mongodb+srv://Sven:3zsJD1PTCYfpbPf1@cluster0.55ncs.mongodb.net/swordfish-manager?retryWrites=true&w=majority",
+    "swordfish-manager"
   );
   console.log("Connected to database 🎉");
+  const [passwordName, newPasswordValue] = readCommandLineArguments();
+
+  console.log(await getPassword(passwordName));
 
   const masterPassword = await askForMasterPassword();
 
@@ -19,7 +26,6 @@ async function run() {
     return run();
   }
 
-  const [passwordName, newPasswordValue] = readCommandLineArguments();
   if (!passwordName) {
     console.error("Missing password name!");
     return process.exit(9);
