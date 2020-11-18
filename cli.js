@@ -1,42 +1,46 @@
+require("dotenv").config();
+const chalk = require("chalk");
+
 const { readCommandLineArguments } = require("./lib/commandLine");
 const { connect, close } = require("./lib/database");
 const {
   //readPasswordSafe,
   getPassword,
   setPassword,
+  findPasswordByName,
 } = require("./lib/passwords");
 const { askForMasterPassword } = require("./lib/questions");
 const { isMasterPasswordCorrect } = require("./lib/validation");
 
 async function run() {
-  console.log("Connecting to database...");
-  await connect(
-    "mongodb+srv://Sven:3zsJD1PTCYfpbPf1@cluster0.55ncs.mongodb.net/swordfish-manager?retryWrites=true&w=majority",
-    "swordfish-manager"
-  );
-  console.log("Connected to database 🎉");
+  console.log(chalk.yellow("Connecting to database..."));
+  await connect(process.env.DB_USER_PASSWORD, process.env.DB_NAME);
+  console.log(chalk.green("Connected to database 🎉"));
+  console.log(chalk.inverse("Swordfish-Manager"));
   const [passwordName, newPasswordValue] = readCommandLineArguments();
-
-  console.log(await getPassword(passwordName));
 
   const masterPassword = await askForMasterPassword();
 
   if (!(await isMasterPasswordCorrect(masterPassword))) {
-    console.error("You are not welcome here! 👿 Try again!");
+    console.error(chalk.red("Beep, that's wrong! 😱"));
     return run();
   }
 
   if (!passwordName) {
-    console.error("Missing password name!");
+    console.error(chalk.red("Missing password name! 😬"));
     return process.exit(9);
   }
 
+  console.error(chalk.green("Correct! 🤩"));
+
   if (newPasswordValue) {
     await setPassword(passwordName, newPasswordValue);
-    console.log(`Password ${passwordName} set 🎉`);
+    console.log(`Password ${chalk.green(passwordName)} set 🎉`);
   } else {
     const passwordValue = await getPassword(passwordName);
-    console.log(`Your password is ${passwordValue} 🎉`);
+    console.log(
+      `Your password for ${passwordName} is ${chalk.green(passwordValue)} 🎉`
+    );
   }
   await close();
 }
