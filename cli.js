@@ -14,7 +14,7 @@ const { isMasterPasswordCorrect } = require("./lib/validation");
 
 async function run() {
   console.log(chalk.yellow("Connecting to database..."));
-  await connect(process.env.DB_USER_PASSWORD, "swordfish-manager");
+  await connect(process.env.DB_USER_PASSWORD, process.env.DB_NAME);
   console.log(chalk.green("Connected to database 🎉"));
   console.log(chalk.inverse("Swordfish-Manager"));
   const [passwordName, newPasswordValue] = readCommandLineArguments();
@@ -31,12 +31,16 @@ async function run() {
     return process.exit(9);
   }
 
+  console.error(chalk.green("Correct! 🤩"));
+
   if (newPasswordValue) {
     await setPassword(passwordName, newPasswordValue);
     console.log(`Password ${chalk.green(passwordName)} set 🎉`);
   } else {
     const passwordValue = await getPassword(passwordName);
-    console.log(`Your password is ${chalk.green(passwordValue)} 🎉`);
+    console.log(
+      `Your password for ${passwordName} is ${chalk.green(passwordValue)} 🎉`
+    );
   }
   await close();
 }
