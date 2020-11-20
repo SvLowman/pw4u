@@ -22,7 +22,9 @@
     "server": "nodemon server.js",
     "client": "cd client && npm start",
     "storybook": "cd client && npm run storybook",
-    "postinstall": "cd client && npm install"
+    "postinstall": "cd client && npm install",
+    "build": "cd client && npm run build && npm run build-storybook",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
