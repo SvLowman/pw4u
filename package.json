@@ -18,9 +18,11 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev": "concurrently \"npm run server\" \"npm run client\" \"npm run storybook\"",
     "server": "nodemon server.js",
-    "client": "cd client && npm start"
+    "client": "cd client && npm start",
+    "storybook": "cd client && npm run storybook",
+    "postinstall": "cd client && npm install"
   },
   "repository": {
     "type": "git",
